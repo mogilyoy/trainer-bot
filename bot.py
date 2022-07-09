@@ -1,11 +1,13 @@
 import telebot
-from config import bot_token
+from config import bot_token, db_uri
 import markup
 from markup import Pages
 import time
+from db import Database
 
 bot = telebot.TeleBot(token=bot_token)
 pagination = Pages(0, 5)
+db = Database(db_uri=db_uri)
 
 @bot.message_handler(commands='start')
 def start(message):
@@ -51,6 +53,27 @@ def callbacks(callback):
                 reply_markup=markup.menu(),
             )
 
+    if callback.data.startswith('program'):
+        a = []
+        for i in callback.data:
+            if i.isnumeric():
+                a.append(i)
+        a = int(''.join(a))
+        bot.edit_message_text(
+                chat_id=callback.from_user.id,
+                message_id=callback.message.message_id,
+                text=db.get_disc(a),
+                reply_markup= markup.program_menu()
+            )
+
+
+    if callback.data == 'all_exercises':
+        bot.edit_message_text(
+                chat_id=callback.from_user.id,
+                message_id=callback.message.message_id,
+                text=db.get_disc(a),
+                reply_markup= markup.exercise_menu()
+            )
 
 if __name__ == '__main__':
     # while True:

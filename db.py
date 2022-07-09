@@ -17,6 +17,14 @@ class Database():
 
     def get_all_programs_title(self):
         self.db.execute(f'SELECT title FROM men_program')
-        result = self.db.fetchall()
+        result = self.db.fetchall() 
         return result
 
+    def get_disc(self, id:int):
+        self.db.execute(f"SELECT disc FROM men_program WHERE num = {id}")
+        result = self.db.fetchone()
+        return result[0].strip()
+
+    def add_exercise(self, name, group, muscles, image_href, href, advice):
+        self.db.execute("INSERT INTO all_exercises (name, group_name, muscles, image_href, href, advice) VALUES (%s, %s, %s, %s, %s, %s)", (name, group, muscles, image_href, href, advice))
+        self.db.connection.commit()

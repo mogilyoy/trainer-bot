@@ -12,8 +12,9 @@ class Pages:
 
 def menu():
     button1 = InlineKeyboardButton("Программы тренирвок", callback_data="all_programs")
+    button2 = InlineKeyboardButton("Упражнения", callback_data="all_exercises")
     all_buttons = InlineKeyboardMarkup(
-        [[button1]], row_width=1
+        [[button1], [button2]], row_width=1
     )
     return all_buttons
 
@@ -62,7 +63,18 @@ def all_programs_menu(start, end):
         return all_buttons
     else:
         print('что то не так')
-    
+
+def program_menu():
+    menu_button = InlineKeyboardButton(text='<<<<<', callback_data='all_programs')
+    all_buttons = InlineKeyboardMarkup(
+            [[menu_button]], row_width=1
+        )
+    return all_buttons
+
+
+def exercise_menu():
+    pass
+
 
 
 # all_programs_menu()
