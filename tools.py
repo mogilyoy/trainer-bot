@@ -56,10 +56,10 @@ def add_exercises():
         a = f.readlines()
         for el in a:
             el = el.split(':')
-            advice.append(el[1])
+            advice.append(el[1:])
 
-    for i in range(30, len(name)):
-        db.add_exercise(name[i], group[i], muscles[i], image_href[i], href_l[i], advice[i])
+    for i in range(0, len(name)):
+        db.add_exercise(i+1, name[i], group[i], muscles[i], image_href[i], href_l[i], advice[i])
         print(i+1)
 
 
