@@ -23,8 +23,9 @@ class ExercisePagination:
 def menu():
     button2 = InlineKeyboardButton("Упражнения", callback_data="all_exercises")
     button1 = InlineKeyboardButton("Программы тренировок", callback_data="all_programs")
+    button3 = InlineKeyboardButton("Мои достижения", callback_data="my_result")
     all_buttons = InlineKeyboardMarkup(
-        [[button2], [button1]], row_width=1
+        [[button2], [button1], [button3]], row_width=1
     )
     return all_buttons
 
@@ -58,14 +59,12 @@ def all_programs_menu(start, end):
 
     elif start == 0 and end < len(titles) - 1:
         next_button = InlineKeyboardButton(text='Вперед>>', callback_data='next_programs_page')
-        # prev_button = InlineKeyboardButton(text='<<Назад', callback_data='previous_program_page')
         all_buttons = InlineKeyboardMarkup(
             [[el] for el in buttons[start:end]] + [[next_button], [menu_button]], row_width=1
         )
         return all_buttons
 
     elif start != 0 and end == len(titles) - 1:
-        # next_button = InlineKeyboardButton(text='Вперед>>', callback_data='next_programs_page')
         prev_button = InlineKeyboardButton(text='<<Назад', callback_data='previous_program_page')
         all_buttons = InlineKeyboardMarkup(
             [[el] for el in buttons[start:end]] + [[prev_button], [menu_button]], row_width=1
@@ -131,7 +130,6 @@ def exercise_menu(musc_group, start, end):
         return all_buttons  
 
     elif start == 0:
-        # prev_button = InlineKeyboardButton(text='<<Назад', callback_data='previous_exercise_page')
         next_button = InlineKeyboardButton(text='Вперед>>', callback_data='next_exercise_page')
 
         all_buttons = InlineKeyboardMarkup(
@@ -141,8 +139,6 @@ def exercise_menu(musc_group, start, end):
 
     elif start != 0 and end == len(exercise) - 1:
         prev_button = InlineKeyboardButton(text='<<Назад', callback_data='previous_exercise_page')
-        # next_button = InlineKeyboardButton(text='Вперед>>', callback_data='next_exercise_page')
-
         all_buttons = InlineKeyboardMarkup(
                 [[el] for el in buttons[start: end]] + [[prev_button], [back]], row_width=1
             )
@@ -161,7 +157,17 @@ def exercise_description(group, num):
         )
     return all_buttons
 
-# exercise_menu(2)
+
+def result_menu():
+    button1 = InlineKeyboardButton(text= 'Профиль', callback_data='profile')
+    button2 = InlineKeyboardButton(text= 'Мой прогресс', callback_data='my_progress')
+    button3 = InlineKeyboardButton(text= 'Записать результат', callback_data='write_result')
+
+    all_buttons = InlineKeyboardMarkup(
+            [[button1, button2], [button3]], row_width=1
+        )
+    return all_buttons
+
     
 
 

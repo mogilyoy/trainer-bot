@@ -4,6 +4,7 @@ import markup
 from markup import ProgramPages, ExercisePages, ExercisePagination
 import time
 from db import Database
+from random import choice
 
 bot = telebot.TeleBot(token=bot_token)
 pagination1 = ProgramPages(0, 5)
@@ -13,7 +14,13 @@ db = Database(db_uri=db_uri)
 
 @bot.message_handler(commands='start')
 def start(message):
-    bot.send_message(message.chat.id, text='Привет, мужик!', reply_markup=markup.menu())
+    bot.send_message(message.chat.id, text=random_motivation(), reply_markup=markup.menu())
+
+
+def random_motivation():
+    with open('men_program/voitenko.txt', 'r') as f:
+        line = f.readlines()
+        return choice(line)
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -25,7 +32,7 @@ def callbacks(callback):
         bot.edit_message_text(
                 chat_id=callback.from_user.id,
                 message_id=callback.message.message_id,
-                text=f"Вот доступные программы тренировок:",
+                text=random_motivation(),
                 reply_markup=markup.all_programs_menu(pagination1.start, pagination1.end),
             )
     if callback.data == 'next_programs_page':
@@ -34,7 +41,7 @@ def callbacks(callback):
         bot.edit_message_text(
                 chat_id=callback.from_user.id,
                 message_id=callback.message.message_id,
-                text=f"Вот доступные программы тренировок:",
+                text=random_motivation(),
                 reply_markup=markup.all_programs_menu(pagination1.start, pagination1.end),
             )
 
@@ -44,14 +51,14 @@ def callbacks(callback):
         bot.edit_message_text(
                 chat_id=callback.from_user.id,
                 message_id=callback.message.message_id,
-                text=f"Вот доступные программы тренировок:",
+                text=random_motivation(),
                 reply_markup=markup.all_programs_menu(pagination1.start, pagination1.end),
             )
     if callback.data == 'main_menu':
         bot.edit_message_text(
                 chat_id=callback.from_user.id,
                 message_id=callback.message.message_id,
-                text=f"Ты сможешь!",
+                text=random_motivation(),
                 reply_markup=markup.menu(),
             )
 
@@ -73,7 +80,7 @@ def callbacks(callback):
         bot.edit_message_text(
                 chat_id=callback.from_user.id,
                 message_id=callback.message.message_id,
-                text='Выберите группу мышц:',
+                text=random_motivation(),
                 reply_markup= markup.muscle_group_menu()
             )
 
@@ -83,7 +90,7 @@ def callbacks(callback):
         bot.edit_message_text(
                 chat_id=callback.from_user.id,
                 message_id=callback.message.message_id,
-                text=f'Упражнение на группу мышц {pagination2.current}',
+                text=random_motivation(),
                 reply_markup= markup.exercise_menu(pagination2.current, pagination2.start, pagination2.end)
             )
         
@@ -94,7 +101,7 @@ def callbacks(callback):
         bot.edit_message_text(
                         chat_id=callback.from_user.id,
                         message_id=callback.message.message_id,
-                        text=f'Упражнение на группу мышц {pagination2.current}',
+                        text=random_motivation(),
                         reply_markup= markup.exercise_menu(pagination2.current, pagination2.start, pagination2.end)
                     )
 
@@ -104,7 +111,7 @@ def callbacks(callback):
         bot.edit_message_text(
                         chat_id=callback.from_user.id,
                         message_id=callback.message.message_id,
-                        text=f'Упражнение на группу мышц {pagination2.current}',
+                        text=random_motivation(),
                         reply_markup= markup.exercise_menu(pagination2.current, pagination2.start, pagination2.end)
                     )
 
@@ -182,11 +189,24 @@ def callbacks(callback):
             chat_id=callback.from_user.id,
             message_id= callback.message.message_id)
 
+    if callback.data == 'my_result':
+        bot.edit_message_text(
+                chat_id=callback.from_user.id,
+                message_id=callback.message.message_id,
+                text=random_motivation(),
+                reply_markup= markup.result_menu()
+            )
 
-    
-    
-       
-    
+    if callback.data == 'my_progress':
+        pass
+
+    if callback.data == 'profile':
+        pass
+
+    if callback.data == 'write_result':
+        pass
+
+
 
             
 
