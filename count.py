@@ -19,6 +19,15 @@ def similar_rating(s1, s2):
     c = fuzz.WRatio(s1, s2)
     return round((a + b + c)/3, 3)
 
+def find_closest(s1: str, lst: list):
+    a = 0
+    b = ''
+    for el in lst:
+        if a < similar_rating(s1, el.strip()):
+            a = similar_rating(s1, el.strip())
+            b = el.strip()
+    return a, b
+
 
 def build_graph(lst):
     if len(lst) > 30: 

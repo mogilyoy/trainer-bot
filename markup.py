@@ -21,11 +21,11 @@ class ExercisePagination:
 
 
 def menu():
-    button2 = InlineKeyboardButton("Упражнения", callback_data="all_exercises")
-    button1 = InlineKeyboardButton("Программы тренировок", callback_data="all_programs")
     button3 = InlineKeyboardButton("Мои достижения", callback_data="my_result")
+    button1 = InlineKeyboardButton("Программы тренировок", callback_data="all_programs")
+    button2 = InlineKeyboardButton("Упражнения", callback_data="all_exercises")
     all_buttons = InlineKeyboardMarkup(
-        [[button2], [button1], [button3]], row_width=1
+        [[button3], [button1], [button2]], row_width=1
     )
     return all_buttons
 
@@ -162,11 +162,37 @@ def result_menu():
     button1 = InlineKeyboardButton(text= 'Профиль', callback_data='profile')
     button2 = InlineKeyboardButton(text= 'Мой прогресс', callback_data='my_progress')
     button3 = InlineKeyboardButton(text= 'Записать результат', callback_data='write_result')
-
+    back = InlineKeyboardButton(text='<<<<<', callback_data=f'main_menu')
     all_buttons = InlineKeyboardMarkup(
-            [[button1, button2], [button3]], row_width=1
+            [[button1], [button2], [button3], [back]], row_width=1
         )
     return all_buttons
+
+
+def write_result_menu():
+    back = InlineKeyboardButton(text='<<<<<', callback_data=f'my_result')   
+    all_buttons = InlineKeyboardMarkup(
+            [[back]], row_width=1
+        )
+    return all_buttons
+
+
+def hide_menu():
+    button1 = InlineKeyboardButton(text= 'Скрыть', callback_data='hide_exercise')
+    all_buttons = InlineKeyboardMarkup(
+            [[button1]], row_width=1
+        )
+    return all_buttons
+
+def write_result_again():
+    button1 = InlineKeyboardButton(text= 'Записать ещё', callback_data='write_result')
+    back = InlineKeyboardButton(text='<<<<<', callback_data=f'my_result') 
+    button2 = InlineKeyboardButton(text= 'Скрыть', callback_data='hide_exercise')
+    all_buttons = InlineKeyboardMarkup(
+            [[button1], [back], [button2]], row_width=1
+        )
+    return all_buttons
+
 
     
 
