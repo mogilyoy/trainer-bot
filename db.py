@@ -78,6 +78,10 @@ class Database():
         self.db.execute("INSERT INTO user_score (user_id) VALUES (%s)", (user_id,))
         self.db.connection.commit()
 
+    def add_user_to_user_column(self, user_id):
+        self.db.execute("INSERT INTO user_columns (user_id) VALUES (%s)", (user_id,))
+        self.db.connection.commit()
+
 
     def user_exist(self, user_id):
         self.db.execute(f"SELECT user_id FROM user_score WHERE user_id = '{user_id}'")
@@ -86,8 +90,20 @@ class Database():
             return True
         return False
 
+    def user_column_exist(self, user_id):
+        self.db.execute(f"SELECT user_id FROM user_columns WHERE user_id = '{user_id}'")
+        result = self.db.fetchone()
+        if result:
+            return True
+        return False
+
     def get_user_score(self, user_id, column):
-        self.db.execute(f"SELECT {column} FROM user_score WHERE user_id = '{user_id}'")
+        self.db.execute(f'SELECT "{column}" FROM user_score WHERE user_id = %s', (f'{user_id}',))
+        result = self.db.fetchone()
+        return result
+
+    def get_user_columns(self, user_id):
+        self.db.execute(f'SELECT columns FROM user_columns WHERE user_id = %s', (f'{user_id}',))
         result = self.db.fetchone()
         return result
 
@@ -102,6 +118,23 @@ class Database():
             self.db.execute(f"UPDATE user_score SET {column_name} = '{score}' WHERE user_id = '{user_id}'")
             self.db.connection.commit()
 
+    def add_to_user_columns(self, user_id, column_name):
+        try:
+            res = self.get_user_columns(user_id)[0].split('-')
+            print(res)
+            if not column_name in res:
+                if res[0]:
+                    res = '-'.join(res)
+                    res += f'-{column_name}'
+                    self.db.execute(f"UPDATE user_columns SET columns = '{res}' WHERE user_id = '{user_id}'")
+                    self.db.connection.commit()
+                else:
+                    self.db.execute(f"UPDATE user_columns SET columns = '{column_name}' WHERE user_id = '{user_id}'")
+                    self.db.connection.commit()
+        except AttributeError:
+            self.db.execute(f"UPDATE user_columns SET columns = '{column_name}' WHERE user_id = '{user_id}'")
+            self.db.connection.commit()
+
     def get_user_score_list(self, user_id, column):
         self.db.execute(f"SELECT {column} FROM user_score WHERE user_id = '{user_id}'")
         result = self.db.fetchone()
@@ -114,11 +147,15 @@ class Database():
         self.db.connection.commit()
 
 
+    def get_all_result_column(self, user_id):
+        self.db.execute(f"SELECT columns FROM user_columns WHERE user_id = '{user_id}'")
+        result = self.db.fetchone()
+        result = result[0].split('-')
+        return result
 
 
 if __name__ == '__main__':
     db = Database(db_uri)
-    db.add_to_user_score(356366758, 'отжимания', 50)
-    print(db.get_user_score_list(356366758, 'отжимания'))
+    
 
     

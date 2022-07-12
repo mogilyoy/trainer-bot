@@ -19,6 +19,11 @@ class ExercisePages:
 class ExercisePagination:
     current:int
 
+@dataclass
+class ProgresPagination:
+    start: int
+    end: int
+
 
 def menu():
     button3 = InlineKeyboardButton("Мои достижения", callback_data="my_result")
@@ -192,6 +197,53 @@ def write_result_again():
             [[button1], [back], [button2]], row_width=1
         )
     return all_buttons
+
+
+def progress_menu(user_id, start, end):
+    db = Database(db_uri=db_uri)
+    columns = db.get_all_result_column(user_id)
+    buttons = []
+    back = InlineKeyboardButton(text='<<<<<', callback_data=f'my_result')
+
+    for el in columns:
+        buttons.append(InlineKeyboardButton(text=el.capitalize(), callback_data=f'{el}'))
+
+    if len(columns) <= 5: 
+        end = len(columns)
+        all_buttons = InlineKeyboardMarkup(
+                [[el] for el in buttons[start: end]] + [[back]], row_width=1
+            )
+        return all_buttons
+
+    if start != 0 and end < len(columns) - 1:
+        prev_button = InlineKeyboardButton(text='<<Назад', callback_data='previous_progress_page')
+        next_button = InlineKeyboardButton(text='Вперед>>', callback_data='next_progress_page')
+
+        all_buttons = InlineKeyboardMarkup(
+                [[el] for el in buttons[start: end]] + [[prev_button, next_button], [back]], row_width=1
+            )
+        return all_buttons  
+
+    elif start == 0:
+        next_button = InlineKeyboardButton(text='Вперед>>', callback_data='next_progress_page')
+
+        all_buttons = InlineKeyboardMarkup(
+                [[el] for el in buttons[start: end]] + [[next_button], [back]], row_width=1
+            )
+        return all_buttons
+
+    elif start != 0 and end == len(columns) - 1:
+        prev_button = InlineKeyboardButton(text='<<Назад', callback_data='previous_progress_page')
+        all_buttons = InlineKeyboardMarkup(
+                [[el] for el in buttons[start: end]] + [[prev_button], [back]], row_width=1
+            )
+        return all_buttons  
+    
+    else:
+        print('что то не так')
+
+
+    pass
 
 
     

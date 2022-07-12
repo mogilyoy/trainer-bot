@@ -3,7 +3,7 @@ import telebot
 from config import bot_token, db_uri
 import count
 import markup
-from markup import ProgramPages, ExercisePages, ExercisePagination
+from markup import ProgramPages, ExercisePages, ExercisePagination, ProgresPagination
 import time
 from db import Database
 from random import choice
@@ -12,6 +12,7 @@ bot = telebot.TeleBot(token=bot_token)
 pagination1 = ProgramPages(0, 5)
 pagination2 = ExercisePages('', 0, 5)
 pagination3 = ExercisePagination(0)
+pagination4 = ProgresPagination(0, 5)
 db = Database(db_uri=db_uri)
 
 @bot.message_handler(commands='start')
@@ -19,6 +20,8 @@ def start(message):
     bot.send_message(message.chat.id, text=random_motivation(), reply_markup=markup.menu())
     if not db.user_exist(message.from_user.id):
         db.add_user_to_user_score(message.from_user.id)
+    if not db.user_column_exist(message.from_user.id):
+        db.add_user_to_user_column(message.from_user.id)
 
 
 def random_motivation():
@@ -39,7 +42,7 @@ def callbacks(callback):
                 text=random_motivation(),
                 reply_markup=markup.all_programs_menu(pagination1.start, pagination1.end),
             )
-    if callback.data == 'next_programs_page':
+    elif callback.data == 'next_programs_page':
         pagination1.start += 5
         pagination1.end += 5
         bot.edit_message_text(
@@ -49,7 +52,7 @@ def callbacks(callback):
                 reply_markup=markup.all_programs_menu(pagination1.start, pagination1.end),
             )
 
-    if callback.data == 'previous_program_page':
+    elif callback.data == 'previous_program_page':
         pagination1.start -= 5
         pagination1.end -= 5
         bot.edit_message_text(
@@ -58,7 +61,7 @@ def callbacks(callback):
                 text=random_motivation(),
                 reply_markup=markup.all_programs_menu(pagination1.start, pagination1.end),
             )
-    if callback.data == 'main_menu':
+    elif callback.data == 'main_menu':
         bot.edit_message_text(
                 chat_id=callback.from_user.id,
                 message_id=callback.message.message_id,
@@ -66,7 +69,7 @@ def callbacks(callback):
                 reply_markup=markup.menu(),
             )
 
-    if callback.data.startswith('program'):
+    elif callback.data.startswith('program'):
         a = []
         for i in callback.data:
             if i.isnumeric():
@@ -80,7 +83,7 @@ def callbacks(callback):
             )
 
 
-    if callback.data == 'all_exercises':
+    elif callback.data == 'all_exercises':
         bot.edit_message_text(
                 chat_id=callback.from_user.id,
                 message_id=callback.message.message_id,
@@ -89,7 +92,7 @@ def callbacks(callback):
             )
 
 
-    if callback.data.startswith('musc_'):
+    elif callback.data.startswith('musc_'):
         pagination2.current = callback.data[5:]
         bot.edit_message_text(
                 chat_id=callback.from_user.id,
@@ -99,7 +102,7 @@ def callbacks(callback):
             )
         
 
-    if callback.data == 'next_exercise_page':
+    elif callback.data == 'next_exercise_page':
         pagination2.start += 5
         pagination2.end += 5
         bot.edit_message_text(
@@ -109,7 +112,7 @@ def callbacks(callback):
                         reply_markup= markup.exercise_menu(pagination2.current, pagination2.start, pagination2.end)
                     )
 
-    if callback.data == 'previous_exercise_page':
+    elif callback.data == 'previous_exercise_page':
         pagination2.start -= 5
         pagination2.end -= 5
         bot.edit_message_text(
@@ -119,7 +122,7 @@ def callbacks(callback):
                         reply_markup= markup.exercise_menu(pagination2.current, pagination2.start, pagination2.end)
                     )
 
-    if callback.data.startswith('back') or callback.data.startswith('feet') or callback.data.startswith('breast') or callback.data.startswith('hands') or callback.data.startswith('trapeze') or callback.data.startswith('delta') or callback.data.startswith('press'):
+    elif callback.data.startswith('back') or callback.data.startswith('feet') or callback.data.startswith('breast') or callback.data.startswith('hands') or callback.data.startswith('trapeze') or callback.data.startswith('delta') or callback.data.startswith('press'):
         group = []
         num = []
         for i in callback.data:
@@ -143,7 +146,7 @@ def callbacks(callback):
             reply_markup = markup.exercise_description(group, num)     
         )
 
-    if callback.data.startswith('advice_back'):
+    elif callback.data.startswith('advice_back'):
         spl = callback.data.split('_')
 
         group = spl[2]
@@ -166,7 +169,7 @@ def callbacks(callback):
             reply_markup = markup.exercise_description(group, num)     
         )
 
-    if callback.data.startswith('advice_forward'):
+    elif callback.data.startswith('advice_forward'):
         spl = callback.data.split('_')
         group = spl[2]
         num = spl[3]
@@ -188,12 +191,12 @@ def callbacks(callback):
             reply_markup = markup.exercise_description(group, num)     
         )
     
-    if callback.data == 'hide_exercise':
+    elif callback.data == 'hide_exercise':
         bot.delete_message(
             chat_id=callback.from_user.id,
             message_id= callback.message.message_id)
 
-    if callback.data == 'my_result':
+    elif callback.data == 'my_result':
         bot.edit_message_text(
                 chat_id=callback.from_user.id,
                 message_id=callback.message.message_id,
@@ -201,13 +204,7 @@ def callbacks(callback):
                 reply_markup= markup.result_menu()
             )
 
-    if callback.data == 'my_progress':
-        pass
-
-    if callback.data == 'profile':
-        pass
-
-    if callback.data == 'write_result':
+    elif callback.data == 'write_result':
         msg = bot.edit_message_text(
                 chat_id=callback.from_user.id,
                 message_id=callback.message.message_id,
@@ -215,7 +212,44 @@ def callbacks(callback):
                 reply_markup= markup.write_result_menu()
             )
         bot.register_next_step_handler(msg, write_result)
+
+    elif callback.data == 'my_progress':
+        bot.edit_message_text(
+                chat_id=callback.from_user.id,
+                message_id=callback.message.message_id,
+                text=random_motivation(),
+                reply_markup= markup.progress_menu(callback.from_user.id, pagination4.start, pagination4.end)
+            )
+    elif callback.data == 'next_progress_page':
+        pagination4.start += 5
+        pagination4.end += 5
+
+        bot.edit_message_text(
+                chat_id=callback.from_user.id,
+                message_id=callback.message.message_id,
+                text=random_motivation(),
+                reply_markup= markup.progress_menu(callback.from_user.id, pagination4.start, pagination4.end))
+
+    elif callback.data == 'previous_progress_page':
+        pagination4.start -= 5
+        pagination4.end -= 5
+
+        bot.edit_message_text(
+                chat_id=callback.from_user.id,
+                message_id=callback.message.message_id,
+                text=random_motivation(),
+                reply_markup= markup.progress_menu(callback.from_user.id, pagination4.start, pagination4.end))
+
+
+
+
+    # else: 
+
+
         
+
+
+
 
 def write_result(message):
     text = message.text
@@ -236,7 +270,9 @@ def write_result(message):
         el = count.find_closest(exercise_name.lower().strip(), exercise_list)
         print(el[1])
         db.add_to_user_score(user, el[1], quan)
+        db.add_to_user_columns(user, el[1])
         bot.send_message(message.chat.id, text= f'Ваш результат успешно записан в группу: {el[1]}\nПроверьте результат в разделе Мой прогресс ', reply_markup=markup.write_result_again())
+
 
     else: 
         bot.send_message(message.chat.id, text='Неправильный формат данных!\nЧтобы посмотреть пример записи и подробную информацию отправьте мне\n/score', reply_markup=markup.hide_menu())
