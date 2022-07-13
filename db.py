@@ -111,11 +111,11 @@ class Database():
         res = list(self.get_user_score(user_id, column_name))
         if res[0]:
             res[0] += f'-{score}'
-            self.db.execute(f"UPDATE user_score SET {column_name} = '{res[0]}' WHERE user_id = '{user_id}'")
+            self.db.execute(f"""UPDATE user_score SET "{column_name}" = '{res[0]}' WHERE user_id = '{user_id}'""")
             self.db.connection.commit()
 
         else: 
-            self.db.execute(f"UPDATE user_score SET {column_name} = '{score}' WHERE user_id = '{user_id}'")
+            self.db.execute(f"""UPDATE user_score SET "{column_name}" = '{score}' WHERE user_id = '{user_id}'""")
             self.db.connection.commit()
 
     def add_to_user_columns(self, user_id, column_name):
@@ -136,14 +136,14 @@ class Database():
             self.db.connection.commit()
 
     def get_user_score_list(self, user_id, column):
-        self.db.execute(f"SELECT {column} FROM user_score WHERE user_id = '{user_id}'")
+        self.db.execute(f"""SELECT "{column}" FROM user_score WHERE user_id = '{user_id}'""")
         result = self.db.fetchone()
         result = result[0].split('-')
         return result
 
 
     def delete_user_result(self, user_id, column_name):
-        self.db.execute(f"UPDATE user_score SET {column_name} = '0' WHERE user_id = '{user_id}'")
+        self.db.execute(f"""UPDATE user_score SET "{column_name}" = '0' WHERE user_id = '{user_id}'""")
         self.db.connection.commit()
 
 

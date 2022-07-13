@@ -1,7 +1,4 @@
 from fuzzywuzzy import fuzz
-import matplotlib.pyplot as plt
-import seaborn as sbs
-
 
 def are_similar(s1, s2):
     if fuzz.ratio(s1, s2) >= 67:
@@ -27,12 +24,4 @@ def find_closest(s1: str, lst: list):
             a = similar_rating(s1, el.strip())
             b = el.strip()
     return a, b
-
-
-def build_graph(lst):
-    if len(lst) > 30: 
-        lst = lst[-30:]
-    sbs.set_style("whitegrid")
-    sbs.lineplot(x = list(range(1, len(lst) + 1)), y = lst, legend='full')
-    plt.savefig('images/graph.png')  
-
+ 

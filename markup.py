@@ -3,7 +3,6 @@ from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 from db import Database
 from config import db_uri
 
-
 @dataclass
 class ProgramPages:
     start: int
@@ -23,7 +22,6 @@ class ExercisePagination:
 class ProgresPagination:
     start: int
     end: int
-
 
 def menu():
     button3 = InlineKeyboardButton("Мои достижения", callback_data="my_result")
@@ -206,7 +204,7 @@ def progress_menu(user_id, start, end):
     back = InlineKeyboardButton(text='<<<<<', callback_data=f'my_result')
 
     for el in columns:
-        buttons.append(InlineKeyboardButton(text=el.capitalize(), callback_data=f'{el}'))
+        buttons.append(InlineKeyboardButton(text=el.capitalize(), callback_data=f'progress_{el}'))
 
     if len(columns) <= 5: 
         end = len(columns)
@@ -243,7 +241,21 @@ def progress_menu(user_id, start, end):
         print('что то не так')
 
 
-    pass
+def profile_menu():
+    button1 = InlineKeyboardButton(text='Написать админу', url='https://t.me/mogilyoy', callback_data=f'write_admin')
+    button2 = InlineKeyboardButton(text='Поддержать проект', url = 'https://www.tinkoff.ru/rm/mogilev.matvey2/dWoLB29372', callback_data=f'pay')
+    back = InlineKeyboardButton(text='<<<<<', callback_data=f'my_result')
+
+    all_buttons = InlineKeyboardMarkup(
+            [[button1], [button2], [back]], row_width=1
+        )
+    return all_buttons
+
+
+
+
+
+
 
 
     
